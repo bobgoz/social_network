@@ -1,0 +1,99 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'index' %}">Главная страница</a>
+        <button
+          class="navbar-toggler d-lg-none"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapsibleNavId"
+          aria-controls="collapsibleNavId"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavId">
+          <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'meeting' %}" aria-current="page"
+                >Знакомства</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Форум</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Новости</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Ресурсы</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="supportDropdown"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Поддержка</a
+              >
+              <div
+                class="dropdown-menu"
+                aria-labelledby="dropdownId"
+              >
+              <a class="dropdown-item" href="#"
+                >FAQ</a
+              >
+              <a class="dropdown-item" href="#"
+                >Контакты</a
+              >
+              <a class="dropdown-item" href="#"
+                >Обратная связь</a
+              >
+            </li>
+          </ul>
+        </div>
+        {% if user.is_authenticated %}
+          <div class="dropdown open">
+            <button
+              class="btn btn-primary dropdown-toggle"
+              type="button"
+              id="triggerId"
+              data-bs-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >
+                Профиль
+            </button>
+            <div class="dropdown-menu" aria-labelledby="triggerId">
+                <a class="dropdown-item" href="#">Профиль</a>
+                <a class="dropdown-item" href="#">Настройки</a>
+                <a class="dropdown-item" href="#">Сообщения</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'logout' %}">
+                Выйти из аккаунта
+                </a>
+            </div>
+            </div>
+        {% else %}
+            <a
+            id="login"
+            class="btn btn-primary"
+            href="{% url 'login' %}"
+            role="button"
+            >Войти</a
+            >
+            <a
+            id="registration"
+            class="btn btn-primary"
+            href="{% url 'registration' %}"
+            role="button"
+            >Регистрация</a
+            >
+            {% endif %}
+        </div>
+    </div>
+    </nav>
+</header>
