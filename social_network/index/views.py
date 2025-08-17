@@ -5,7 +5,11 @@ from django.contrib.auth import get_user_model
 from django.views.generic import (
     CreateView,
     ListView,
+    DetailView,
 )
+
+from .forms import CustomUserCreationForm
+
 
 User = get_user_model()
 
@@ -14,7 +18,7 @@ class RegistrationUserView(CreateView):
     """Вью для регистрации."""
 
     template_name = r'registration\registration.html'
-    form_class = UserCreationForm
+    form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
 
 
@@ -24,3 +28,12 @@ class ProfileListView(ListView):
     model = User
     template_name = 'social/meeting.html'
     context_object_name = 'profile'
+
+
+class ProfileDetailView(DetailView):
+    """Вью для детального отображения профиля."""
+
+    model = User
+    template_name = 'social/meeting.html'
+    slug_url_kwarg = 'username'
+

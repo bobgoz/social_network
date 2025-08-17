@@ -1,10 +1,128 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <h3 class="text-center">Знакомства</h3>
-    {% for obj in object_list  %}
-    <p>{{ obj.username }}</p>
+<div class="container py-5">
+  <!-- Заголовок с иконкой -->
+  <div class="text-center mb-5">
+    <h1 class="display-4">
+      <i class="bi bi-heart-fill text-danger"></i> Знакомства
+    </h1>
+    <p class="lead text-muted">Найдите друзей и единомышленников в тёплой атмосфере</p>
+  </div>
+
+  <!-- Карточки пользователей -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for profile in object_list %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <!-- Аватар -->
+        <div class="text-center py-3">
+          <img 
+            src="{{ profile.avatar.url|default:'/static/images/default-avatar.png' }}" 
+            class="rounded-circle" 
+            alt="Фото {{ profile.user.get_full_name }}"
+            width="120"
+            height="120"
+            style="object-fit: cover;"
+          >
+        </div>
+
+        <div class="card-body">
+          <!-- Имя и возраст -->
+          <h2 class="h5 card-title">
+            {{ profile.user.get_full_name }}, {{ profile.age }}
+            {% if profile.verified %}
+              <i class="bi bi-patch-check-fill text-primary" title="Подтверждённый профиль"></i>
+            {% endif %}
+          </h2>
+
+          <!-- Краткая информация -->
+          <ul class="list-unstyled mb-3">
+            {% if profile.city %}
+            <li>
+              <i class="bi bi-geo-alt"></i> 
+              {{ profile.city }}
+            </li>
+            {% endif %}
+            <li>
+              <i class="bi bi-people"></i> 
+              Ищу: {{ profile.get_looking_for_display }}
+            </li>
+          </ul>
+
+          <!-- Интересы (чипы) -->
+          <div class="mb-3">
+            {% for interest in profile.interests.all|slice:":5" %}
+            <span class="badge bg-light text-dark me-1 mb-1">{{ interest.name }}</span>
+            {% endfor %}
+          </div>
+
+          <!-- Кнопка просмотра -->
+          <a 
+            href="{% url 'profile_detail' profile.user.username %}" 
+            class="btn btn-outline-primary w-100 stretched-link"
+            aria-label="Посмотреть профиль {{ profile.user.first_name }}"
+          >
+            Подробнее
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> Пока нет анкет. Будьте первым!
+      </div>
+    </div>
     {% endfor %}
   </div>
-{% endblock content %}
+
+  <!-- Пагинация -->
+  {% if is_paginated %}
+  <nav aria-label="Навигация" class="mt-5">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+      
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+
+<!-- Специальные стили -->
+<style>
+  .card {
+    transition: transform 0.2s;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  .badge {
+    font-weight: normal;
+  }
+  .page-item.active .page-link {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+  }
+</style>
+{% endblock %}
