@@ -1,6 +1,247 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Профили пользователей{% endblock title %}
+{% block title %}Профиль {{ profile.user.username }} - Социальная сеть{% endblock %}
+
 {% block content %}
-  <h1 class="mb-5 text-center">Карточки пользователей<h1>
-{% endblock content %}
+  <div class="container mt-4">
+    <!-- Заголовок и кнопки действий -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Профиль пользователя</h1>
+        <div>
+            <button class="btn btn-outline-primary me-2">
+                <i class="bi bi-chat-dots"></i> Написать сообщение
+            </button>
+            <button class="btn btn-primary">
+                <i class="bi bi-person-plus"></i> Добавить в друзья
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Левая колонка - информация о пользователе -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <img src="{% if profile.avatar %}{{ profile.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" 
+                         alt="Аватар {{ profile.user.get_full_name }}" 
+                         class="rounded-circle mb-3" 
+                         width="150" 
+                         height="150">
+                    <h2 class="h4">{{ profile.user.get_full_name }}</h2>
+                    <p class="text-muted">@{{ profile.user.username }}</p>
+                    
+                    {% if profile.user == request.user %}
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i> Редактировать профиль
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h6 mb-0">Информация</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% if profile.city %}
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                            Город: {{ profile.city }}
+                        </li>
+                        {% endif %}
+                        
+                        {% if profile.birth_date %}
+                        <li class="mb-2">
+                            <i class="bi bi-balloon text-primary me-2"></i>
+                            Дата рождения: {{ profile.birth_date|date:"d.m.Y" }}
+                        </li>
+                        {% endif %}
+                        
+                        <li class="mb-2">
+                            <i class="bi bi-calendar-check text-primary me-2"></i>
+                            На сайте с: {{ profile.user.date_joined|date:"d.m.Y" }}
+                        </li>
+                        
+                        {% if profile.disability_type %}
+                        <li class="mb-2">
+                            <i class="bi bi-heart-pulse text-primary me-2"></i>
+                            Особенность: {{ profile.get_disability_type_display }}
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h6 mb-0">Контакты</h3>
+                </div>
+                <div class="card-body">
+                    {% if profile.phone %}
+                    <p class="mb-2">
+                        <i class="bi bi-telephone text-primary me-2"></i>
+                        {{ profile.phone }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if profile.user.email %}
+                    <p class="mb-0">
+                        <i class="bi bi-envelope text-primary me-2"></i>
+                        {{ profile.user.email }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка - основная информация и активность -->
+        <div class="col-md-8">
+            <!-- О себе -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h6 mb-0">О себе</h3>
+                </div>
+                <div class="card-body">
+                    {% if profile.bio %}
+                        <p>{{ profile.bio|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted">Пользователь еще не добавил информацию о себе.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Интересы -->
+            {% if profile.interests.all %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h6 mb-0">Интересы</h3>
+                </div>
+                <div class="card-body">
+                    {% for interest in profile.interests.all %}
+                    <span class="badge bg-light text-dark me-1 mb-1">{{ interest.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Доступность -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h6 mb-0">Особые потребности</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="h6">Доступная среда</h4>
+                            <ul class="list-unstyled">
+                                <li class="mb-1">
+                                    {% if profile.need_wheelchair_access %}
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill text-secondary me-2"></i>
+                                    {% endif %}
+                                    Нужен доступ для колясок
+                                </li>
+                                <li class="mb-1">
+                                    {% if profile.need_sign_language %}
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill text-secondary me-2"></i>
+                                    {% endif %}
+                                    Нужен сурдоперевод
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="h6">Помощь</h4>
+                            <ul class="list-unstyled">
+                                <li class="mb-1">
+                                    {% if profile.can_help_others %}
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill text-secondary me-2"></i>
+                                    {% endif %}
+                                    Может помогать другим
+                                </li>
+                                <li class="mb-1">
+                                    {% if profile.need_help %}
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill text-secondary me-2"></i>
+                                    {% endif %}
+                                    Нуждается в помощи
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Друзья -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="h6 mb-0">Друзья</h3>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Все друзья</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for friend in friends|slice:":6" %}
+                        <div class="col-4 col-md-2 text-center mb-3">
+                            <img src="{% if friend.avatar %}{{ friend.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" 
+                                 alt="{{ friend.user.get_full_name }}" 
+                                 class="rounded-circle mb-1" 
+                                 width="60" 
+                                 height="60">
+                            <p class="small mb-0">{{ friend.user.first_name }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">У пользователя пока нет друзей.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    
+    .badge {
+        padding: 0.5em 0.8em;
+    }
+    
+    /* Улучшения доступности для пользователей с особыми потребностями */
+    body {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .btn, .badge {
+        border-radius: 0.375rem;
+    }
+    
+    /* Высококонтрастный режим */
+    @media (prefers-contrast: high) {
+        .text-muted {
+            color: #000 !important;
+        }
+        
+        .card {
+            border: 1px solid #000;
+        }
+    }
+</style>
+{% endblock %}
