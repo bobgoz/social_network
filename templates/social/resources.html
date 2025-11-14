@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Ресурсы для людей с ОВЗ{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Основной контент -->
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">Полезные ресурсы</h1>
+            {% if user.is_staff %}
+            <a href="{% url 'add_resource' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Добавить ресурс
+            </a>
+            {% endif %}
+        </div>
+
+        <p class="text-muted mb-4">
+            Здесь собраны полезные материалы, организации и инструменты, которые могут помочь людям 
+            с ограниченными возможностями здоровья и их близким.
+        </p>
+
+        <!-- Фильтры и поиск -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="resourceSearch" placeholder="Поиск ресурсов...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="resourceTypeFilter">
+                            <option value="all">Все типы ресурсов</option>
+                            <option value="organization">Организации</option>
+                            <option value="material">Материалы</option>
+                            <option value="service">Сервисы</option>
+                            <option value="legislation">Законодательство</option>
+                            <option value="technology">Технологии</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if resources %}
+        <!-- Список ресурсов -->
+        <div class="row" id="resourcesList">
+            {% for resource in resources %}
+            <div class="col-md-6 col-lg-4 mb-4 resource-item" data-type="{{ resource.type }}">
+                <div class="card h-100 resource-card">
+                    <div class="card-header bg-transparent border-0 pt-3">
+                        <span class="badge {% if resource.type == 'organization' %}bg-primary{% elif resource.type == 'material' %}bg-success{% elif resource.type == 'service' %}bg-warning{% elif resource.type == 'legislation' %}bg-info{% else %}bg-secondary{% endif %}">
+                            {{ resource.get_type_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi {% if resource.type == 'organization' %}bi-building{% elif resource.type == 'material' %}bi-file-text{% elif resource.type == 'service' %}bi-tools{% elif resource.type == 'legislation' %}bi-journal-text{% else %}bi-lightbulb{% endif %}" 
+                               style="font-size: 2.5rem; 
+                                      {% if resource.type == 'organization' %}color: #0d6efd;{% elif resource.type == 'material' %}color: #198754;{% elif resource.type == 'service' %}color: #ffc107;{% elif resource.type == 'legislation' %}color: #0dcaf0;{% else %}color: #6c757d;{% endif %}">
+                            </i>
+                        </div>
+                        
+                        <h5 class="card-title">{{ resource.title }}</h5>
+                        <p class="card-text text-muted small">{{ resource.short_description }}</p>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-grid gap-2">
+                            {% if resource.external_link %}
+                            <a href="{{ resource.external_link }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-box-arrow-up-right"></i> Перейти
+                            </a>
+                            {% else %}
+                            <a href="{% url 'resource_detail' resource.slug %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-info-circle"></i> Подробнее
+                            </a>
+                            {% endif %}
+                            
+                            {% if user.is_authenticated %}
+                            <button class="btn btn-outline-secondary btn-sm save-resource" data-resource-id="{{ resource.id }}">
+                                <i class="bi bi-bookmark"></i> Сохранить
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <!-- Пустое состояние -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-collection" style="font-size: 4rem; color: #6c757d;"></i>
+            </div>
+            <h3 class="text-muted mb-3">Ресурсы пока не добавлены</h3>
+            <p class="text-muted mb-4">Мы работаем над наполнением этого раздела полезными материалами</p>
+            
+            {% if user.is_staff %}
+            <a href="{% url 'add_resource' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle"></i> Добавить первый ресурс
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-lg-3">
+        <!-- Статистика ресурсов -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Статистика</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <h4 class="text-primary">{{ total_resources }}</h4>
+                    <small class="text-muted">Всего ресурсов</small>
+                </div>
+                <hr>
+                <div class="small">
+                    {% for stat in resource_stats %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ stat.type_display }}</span>
+                        <span class="text-muted">{{ stat.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрые ссылки -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Популярные ресурсы</h5>
+            </div>
+            <div class="card-body">
+                {% if popular_resources %}
+                <div class="list-group list-group-flush">
+                    {% for resource in popular_resources %}
+                    <a href="{% if resource.external_link %}{{ resource.external_link }}{% else %}{% url 'resource_detail' resource.slug %}{% endif %}" 
+                       class="list-group-item list-group-item-action" target="{{ resource.external_link|yesno:'_blank,_self' }}">
+                        <div class="d-flex align-items-center">
+                            <i class="bi {% if resource.type == 'organization' %}bi-building{% elif resource.type == 'material' %}bi-file-text{% elif resource.type == 'service' %}bi-tools{% elif resource.type == 'legislation' %}bi-journal-text{% else %}bi-lightbulb{% endif %} me-2"></i>
+                            <span class="flex-grow-1">{{ resource.title }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">Популярные ресурсы появятся позже</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Предложение помощи -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Знаете полезный ресурс?</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text small">Поделитесь информацией о полезных организациях, материалах или сервисах</p>
+                <a href="" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-lightbulb"></i> Предложить ресурс
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript для фильтрации и поиска -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('resourceSearch');
+    const typeFilter = document.getElementById('resourceTypeFilter');
+    const resourceItems = document.querySelectorAll('.resource-item');
+
+    function filterResources() {
+        const searchText = searchInput.value.toLowerCase();
+        const selectedType = typeFilter.value;
+
+        resourceItems.forEach(item => {
+            const title = item.querySelector('.card-title').textContent.toLowerCase();
+            const description = item.querySelector('.card-text').textContent.toLowerCase();
+            const resourceType = item.getAttribute('data-type');
+
+            const matchesSearch = searchText === '' || title.includes(searchText) || description.includes(searchText);
+            const matchesType = selectedType === 'all' || resourceType === selectedType;
+
+            item.style.display = matchesSearch && matchesType ? 'block' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterResources);
+    typeFilter.addEventListener('change', filterResources);
+
+    // Обработка сохранения ресурсов
+    document.querySelectorAll('.save-resource').forEach(button => {
+        button.addEventListener('click', function() {
+            const resourceId = this.getAttribute('data-resource-id');
+            // Здесь будет код для сохранения ресурса
+            alert('Ресурс сохранен в вашей коллекции!');
+        });
+    });
+});
+</script>
+
+<style>
+.resource-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header .badge {
+    font-size: 0.75rem;
+}
+</style>
+{% endblock %}

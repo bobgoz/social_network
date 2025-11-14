@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Главная | Социальная сеть для людей с ограниченными возможностями{% endblock %}
+
+{% block content %}
+   <!-- Герой-баннер -->
+  <section class="hero-section bg-primary text-white py-5 rounded-3 mb-4">
+    <div class="container text-center">
+      <h1 class="display-4 fw-bold">Мы вместе!</h1>
+      <p class="lead">Первая социальная сеть, объединяющая людей с инвалидностью по всей России</p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        {% if not user.is_authenticated %}
+          <a href="" class="btn btn-light btn-lg px-4 gap-3">Присоединиться</a>
+        {% endif %}
+        <a href="#features" class="btn btn-outline-light btn-lg px-4">Узнать больше</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Возможности платформы -->
+  <section id="features" class="mb-5">
+    <h2 class="text-center mb-4">Наши возможности</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center">
+            <div class="mb-3">
+              <i class="bi bi-people-fill fs-1 text-primary"></i>  <!-- Иконка Bootstrap Icons -->
+            </div>
+            <h3>Знакомства</h3>
+            <p>Найдите друзей и единомышленников с похожими интересами и опытом</p>
+            <a href="" class="btn btn-outline-primary">Перейти</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center">
+            <div class="mb-3">
+              <i class="bi bi-chat-square-text-fill fs-1 text-primary"></i>
+            </div>
+            <h3>Форум</h3>
+            <p>Обсуждайте важные темы, делитесь опытом и получайте поддержку</p>
+            <a href="" class="btn btn-outline-primary">Перейти</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center">
+            <div class="mb-3">
+              <i class="bi bi-info-circle-fill fs-1 text-primary"></i>
+            </div>
+            <h3>Ресурсы</h3>
+            <p>Полезные материалы, законы и контакты организаций</p>
+            <a href="" class="btn btn-outline-primary">Перейти</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Истории успеха -->
+  <section class="mb-5">
+    <h2 class="text-center mb-4">Истории наших пользователей</h2>
+    <div class="row">
+      <div class="col-lg-6 mb-4">
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="https://via.placeholder.com/150" class="img-fluid rounded-start h-100 object-fit-cover" alt="Анна, 28 лет">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Анна, 28 лет</h5>
+                <p class="card-text">"Благодаря этому сайту я нашла подругу, которая понимает мои трудности с передвижением. Теперь мы вместе ходим на онлайн-курсы!"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 mb-4">
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="https://via.placeholder.com/150" class="img-fluid rounded-start h-100 object-fit-cover" alt="Дмитрий, 34 года">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Дмитрий, 34 года</h5>
+                <p class="card-text">"На форуме мне подсказали, как оформить инвалидность. Сэкономил 3 месяца времени и нервов!"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center">
+      <a href="#" class="btn btn-primary">Все истории</a>
+    </div>
+  </section>
+
+  <!-- Новости -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">Последние новости</h2>
+      <a href="" class="btn btn-sm btn-outline-secondary">Все новости</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col">
+        <div class="card h-100">
+          <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Новость 1">
+          <div class="card-body">
+            <h5 class="card-title">Новые меры поддержки</h5>
+            <p class="card-text">С 1 января вступают в силу изменения в законодательстве...</p>
+            <a href="#" class="btn btn-sm btn-outline-primary">Читать</a>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Новость 2">
+          <div class="card-body">
+            <h5 class="card-title">Доступная среда</h5>
+            <p class="card-text">Как адаптировать квартиру для колясочника: практические советы...</p>
+            <a href="#" class="btn btn-sm btn-outline-primary">Читать</a>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Новость 3">
+          <div class="card-body">
+            <h5 class="card-title">Онлайн-мероприятие</h5>
+            <p class="card-text">Приглашаем на вебинар по профориентации для людей с ОВЗ...</p>
+            <a href="#" class="btn btn-sm btn-outline-primary">Читать</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Призыв к действию -->
+  <section class="bg-light py-5 rounded-3 text-center">
+    <h2 class="mb-3">Присоединяйтесь к нашему сообществу!</h2>
+    <p class="lead mb-4">Более 10 000 пользователей уже нашли здесь друзей и поддержку</p>
+    {% if not user.is_authenticated %}
+      <a href="" class="btn btn-primary btn-lg">Зарегистрироваться</a>
+    {% else %}
+      <a href="" class="btn btn-primary btn-lg">Найти друзей</a>
+    {% endif %}
+  </section>
+{% endblock %}

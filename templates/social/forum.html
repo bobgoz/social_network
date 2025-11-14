@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Форум для людей с ОВЗ{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">Форум поддержки</h1>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
+                <i class="bi bi-plus-circle"></i> Начать обсуждение
+            </button>
+        </div>
+
+        <!-- Состояние пустого форума -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-chat-square-text" style="font-size: 4rem; color: #6c757d;"></i>
+            </div>
+            <h3 class="text-muted mb-3">Форум пока пуст</h3>
+            <p class="text-muted mb-4">Будьте первым, кто начнет важное обсуждение</p>
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#newTopicModal">
+                Создать первую тему
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Информация о форуме -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">О форуме</h5>
+            </div>
+            <div class="card-body">
+                <p>Это пространство для взаимопомощи и обмена опытом людей с ограниченными возможностями здоровья.</p>
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 class="text-primary">0</h4>
+                            <small>Тем</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success">0</h4>
+                            <small>Участников</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правила -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Основные правила</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">✓ Уважайте друг друга</li>
+                    <li class="mb-2">✓ Помогайте и поддерживайте</li>
+                    <li class="mb-2">✓ Делитесь полезным опытом</li>
+                    <li>✓ Соблюдайте конфиденциальность</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для новой темы -->
+<div class="modal fade" id="newTopicModal" tabindex="-1" aria-labelledby="newTopicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTopicModalLabel">Начать обсуждение</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="topicTitle" class="form-label">Тема обсуждения</label>
+                        <input type="text" class="form-control" id="topicTitle" name="title" 
+                               placeholder="О чем хотите поговорить?" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicCategory" class="form-label">Категория</label>
+                        <select class="form-select" id="topicCategory" name="category" required>
+                            <option value="">Выберите категорию</option>
+                            <option value="medical">Медицинская помощь</option>
+                            <option value="technical">Технические средства</option>
+                            <option value="legal">Юридические вопросы</option>
+                            <option value="support">Психологическая поддержка</option>
+                            <option value="education">Образование и развитие</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicMessage" class="form-label">Ваше сообщение</label>
+                        <textarea class="form-control" id="topicMessage" name="message" 
+                                 rows="5" placeholder="Поделитесь своими мыслями..." required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Начать обсуждение</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
